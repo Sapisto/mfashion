@@ -17,7 +17,7 @@ export function CartButton() {
     <Link
       href="/cart"
       className="relative p-2 hover:text-brand-terracotta transition-colors"
-      aria-label="Shopping bag"
+      aria-label="Cart"
     >
       <ShoppingBag className="h-5 w-5" />
       {mounted && totalItems > 0 && (
