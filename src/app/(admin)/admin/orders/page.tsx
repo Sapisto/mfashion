@@ -1,21 +1,48 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
-type OrderRow = { id: string; customerName: string; customerEmail: string; total: number; status: string; paymentStatus: string; items: { id: string }[]; createdAt: Date };
 
-export default async function AdminOrdersPage() {
-  const orders = (await db.order.findMany({
-    include: { items: true },
-    orderBy: { createdAt: "desc" },
-  })) as OrderRow[];
+const PER_PAGE = 10;
+
+type OrderRow = {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  total: number;
+  status: string;
+  paymentStatus: string;
+  items: { id: string }[];
+  createdAt: Date;
+};
+
+interface Props {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminOrdersPage({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+
+  const [total, orders] = await Promise.all([
+    db.order.count(),
+    db.order.findMany({
+      include: { items: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PER_PAGE,
+      take: PER_PAGE,
+    }) as unknown as Promise<OrderRow[]>,
+  ]);
+
+  const totalPages = Math.ceil(total / PER_PAGE);
 
   return (
     <div>
       <div className="mb-7">
         <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
         <p className="text-gray-500 text-sm mt-0.5">
-          {orders.length} total order{orders.length !== 1 ? "s" : ""}
+          {total} total order{total !== 1 ? "s" : ""}
         </p>
       </div>
 
@@ -72,6 +99,54 @@ export default async function AdminOrdersPage() {
             <p className="text-gray-400">No orders yet.</p>
           </div>
         )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50">
+            <p className="text-xs text-gray-500">
+              Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, total)} of {total}
+            </p>
+            <div className="flex items-center gap-1">
+              <Link
+                href={`/admin/orders?page=${page - 1}`}
+                aria-disabled={page <= 1}
+                className={`p-1.5 rounded border text-gray-600 transition-colors ${
+                  page <= 1
+                    ? "pointer-events-none opacity-40 border-gray-200"
+                    : "border-gray-200 hover:border-brand-terracotta hover:text-brand-terracotta"
+                }`}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Link>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <Link
+                  key={p}
+                  href={`/admin/orders?page=${p}`}
+                  className={`px-3 py-1 text-xs rounded border transition-colors ${
+                    p === page
+                      ? "bg-brand-terracotta text-white border-brand-terracotta font-semibold"
+                      : "border-gray-200 text-gray-600 hover:border-brand-terracotta hover:text-brand-terracotta"
+                  }`}
+                >
+                  {p}
+                </Link>
+              ))}
+
+              <Link
+                href={`/admin/orders?page=${page + 1}`}
+                aria-disabled={page >= totalPages}
+                className={`p-1.5 rounded border text-gray-600 transition-colors ${
+                  page >= totalPages
+                    ? "pointer-events-none opacity-40 border-gray-200"
+                    : "border-gray-200 hover:border-brand-terracotta hover:text-brand-terracotta"
+                }`}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -85,11 +160,7 @@ function PaymentBadge({ status }: { status: string }) {
     REFUNDED: "bg-gray-100 text-gray-600",
   };
   return (
-    <span
-      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-        map[status] ?? "bg-gray-100 text-gray-600"
-      }`}
-    >
+    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${map[status] ?? "bg-gray-100 text-gray-600"}`}>
       {status}
     </span>
   );

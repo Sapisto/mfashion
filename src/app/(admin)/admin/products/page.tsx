@@ -1,17 +1,32 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
 
+const PER_PAGE = 10;
 type ProductRow = { id: string; name: string; slug: string; price: number; stock: number; isActive: boolean; isFeatured: boolean; images: string[]; category: { name: string } | null };
 
-export default async function AdminProductsPage() {
-  const products = (await db.product.findMany({
-    include: { category: true },
-    orderBy: { createdAt: "desc" },
-  })) as ProductRow[];
+interface Props {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminProductsPage({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+
+  const [total, products] = await Promise.all([
+    db.product.count(),
+    db.product.findMany({
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PER_PAGE,
+      take: PER_PAGE,
+    }) as unknown as Promise<ProductRow[]>,
+  ]);
+
+  const totalPages = Math.ceil(total / PER_PAGE);
 
   return (
     <div>
@@ -19,7 +34,7 @@ export default async function AdminProductsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-500 text-sm mt-0.5">
-            {products.length} product{products.length !== 1 ? "s" : ""}
+            {total} product{total !== 1 ? "s" : ""}
           </p>
         </div>
         <Link
@@ -130,6 +145,39 @@ export default async function AdminProductsPage() {
             >
               <Plus className="h-4 w-4" /> Add your first product
             </Link>
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50">
+            <p className="text-xs text-gray-500">
+              Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, total)} of {total}
+            </p>
+            <div className="flex items-center gap-1">
+              <Link
+                href={`/admin/products?page=${page - 1}`}
+                aria-disabled={page <= 1}
+                className={`p-1.5 rounded border text-gray-600 transition-colors ${page <= 1 ? "pointer-events-none opacity-40 border-gray-200" : "border-gray-200 hover:border-brand-terracotta hover:text-brand-terracotta"}`}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Link>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <Link
+                  key={p}
+                  href={`/admin/products?page=${p}`}
+                  className={`px-3 py-1 text-xs rounded border transition-colors ${p === page ? "bg-brand-terracotta text-white border-brand-terracotta font-semibold" : "border-gray-200 text-gray-600 hover:border-brand-terracotta hover:text-brand-terracotta"}`}
+                >
+                  {p}
+                </Link>
+              ))}
+              <Link
+                href={`/admin/products?page=${page + 1}`}
+                aria-disabled={page >= totalPages}
+                className={`p-1.5 rounded border text-gray-600 transition-colors ${page >= totalPages ? "pointer-events-none opacity-40 border-gray-200" : "border-gray-200 hover:border-brand-terracotta hover:text-brand-terracotta"}`}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         )}
       </div>

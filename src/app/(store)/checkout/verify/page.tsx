@@ -27,8 +27,7 @@ export default async function VerifyPage({ searchParams }: Props) {
 
     if (paystackStatus === "success") {
       success = true;
-
-      // Update DB — but don't let DB errors hide a successful payment
+      
       try {
         await db.order.update({
           where: { paymentRef: reference },
