@@ -1,0 +1,262 @@
+import Link from "next/link";
+import { ArrowRight, MessageCircle } from "lucide-react";
+import { db } from "@/lib/db";
+import { ProductCard } from "@/components/store/ProductCard";
+import type { Product } from "@/types";
+
+const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
+
+const CATEGORIES = [
+  {
+    name: "Ankara Styles",
+    slug: "ankara-styles",
+    description: "Vibrant prints, timeless elegance",
+    bg: "#b5622a",
+  },
+  {
+    name: "Casual Wear",
+    slug: "casual-wear",
+    description: "Effortless style for every day",
+    bg: "#111111",
+  },
+  {
+    name: "Evening Wear",
+    slug: "evening-wear",
+    description: "Turn every entrance into a statement",
+    bg: "#c9973e",
+  },
+  {
+    name: "Accessories",
+    slug: "accessories",
+    description: "The details that complete the look",
+    bg: "#3d2b1f",
+  },
+];
+
+async function getFeaturedProducts(): Promise<Product[]> {
+  try {
+    return await db.product.findMany({
+      where: { isFeatured: true, isActive: true },
+      include: { category: true },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+    }) as unknown as Product[];
+  } catch {
+    return [];
+  }
+}
+
+export default async function HomePage() {
+  const featured = await getFeaturedProducts();
+
+  return (
+    <div className="bg-brand-cream">
+
+      {/* ── HERO ── */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+        <div className="grid lg:grid-cols-2 gap-10 items-end">
+          <div>
+            <p className="text-[10px] font-semibold tracking-[0.35em] uppercase text-brand-terracotta mb-5">
+              New Collection — 2025
+            </p>
+            <h1 className="font-heading font-light text-[clamp(3rem,8vw,6.5rem)] leading-[0.95] text-brand-charcoal mb-8">
+              African<br />
+              <em className="font-medium">Fashion</em><br />
+              Redefined.
+            </h1>
+            <div className="flex flex-wrap items-center gap-4">
+              <Link href="/shop" className="btn-primary">
+                Shop Collection
+              </Link>
+              <a
+                href={`https://wa.me/${whatsapp}?text=Hello! I'd like to enquire about your collections.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-end justify-end gap-3">
+            {/* editorial stat blocks */}
+            <div className="space-y-3">
+              <div className="w-44 h-56 bg-brand-charcoal flex flex-col justify-end p-5">
+                <p className="font-heading text-5xl font-light text-white">500+</p>
+                <p className="text-white/50 text-xs tracking-widest uppercase mt-1">Customers</p>
+              </div>
+              <div className="w-44 h-28 bg-brand-terracotta flex flex-col justify-end p-5">
+                <p className="font-heading text-2xl font-medium text-white">Made in</p>
+                <p className="font-heading text-2xl font-medium text-white/70">Nigeria 🇳🇬</p>
+              </div>
+            </div>
+            <div className="w-36 h-96 bg-brand-sand flex flex-col justify-end p-5 mb-0">
+              <p className="font-heading text-lg font-light text-brand-charcoal leading-snug italic">
+                &ldquo;Wear your heritage with pride.&rdquo;
+              </p>
+              <div className="w-8 h-px bg-brand-terracotta mt-4" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MARQUEE STRIP ── */}
+      <div className="border-y border-brand-border py-3 overflow-hidden bg-white">
+        <div className="flex gap-12 whitespace-nowrap animate-[scroll_20s_linear_infinite]">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span key={i} className="flex items-center gap-12 text-[10px] font-semibold tracking-[0.3em] uppercase text-brand-charcoal">
+              <span>Premium Ankara Fabrics</span>
+              <span className="text-brand-terracotta">✦</span>
+              <span>Made in Nigeria</span>
+              <span className="text-brand-terracotta">✦</span>
+              <span>Nationwide Delivery</span>
+              <span className="text-brand-terracotta">✦</span>
+              <span>Custom Orders Welcome</span>
+              <span className="text-brand-terracotta">✦</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── CATEGORIES ── */}
+      <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+        <div className="flex items-end justify-between mb-10">
+          <h2 className="font-heading font-light text-4xl sm:text-5xl text-brand-charcoal">
+            Collections
+          </h2>
+          <Link href="/shop" className="text-xs font-semibold tracking-[0.15em] uppercase text-brand-muted hover:text-brand-charcoal transition-colors flex items-center gap-1.5">
+            All <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {CATEGORIES.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/shop?category=${cat.slug}`}
+              className="group aspect-[3/4] flex flex-col justify-end p-5 transition-opacity hover:opacity-90"
+              style={{ backgroundColor: cat.bg }}
+            >
+              <div>
+                <p className="font-heading text-white text-xl font-medium leading-tight">
+                  {cat.name}
+                </p>
+                <p className="text-white/50 text-[11px] tracking-wide mt-1">
+                  {cat.description}
+                </p>
+                <span className="inline-block mt-4 text-white/60 text-[10px] font-semibold tracking-[0.2em] uppercase group-hover:text-white transition-colors">
+                  Shop →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FEATURED PRODUCTS ── */}
+      {featured.length > 0 && (
+        <section className="border-t border-brand-border py-16 sm:py-24">
+          <div className="max-w-7xl mx-auto px-5 sm:px-8">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <p className="text-[10px] font-semibold tracking-[0.35em] uppercase text-brand-muted mb-2">
+                  Handpicked
+                </p>
+                <h2 className="font-heading font-light text-4xl sm:text-5xl text-brand-charcoal">
+                  Featured Pieces
+                </h2>
+              </div>
+              <Link href="/shop" className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.15em] uppercase text-brand-muted hover:text-brand-charcoal transition-colors">
+                View All <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10">
+              {featured.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── BRAND STORY ── */}
+      <section className="border-t border-brand-border">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Visual block */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2 h-48 bg-brand-charcoal flex items-end p-6">
+                <p className="font-heading text-3xl font-light text-white italic">
+                  Bold. Authentic. African.
+                </p>
+              </div>
+              <div className="h-36 bg-brand-terracotta flex items-end p-4">
+                <div>
+                  <p className="font-heading text-2xl font-bold text-white">50+</p>
+                  <p className="text-white/70 text-xs tracking-widest uppercase">Designs</p>
+                </div>
+              </div>
+              <div className="h-36 bg-brand-sand flex items-end p-4">
+                <div>
+                  <p className="font-heading text-2xl font-bold text-brand-charcoal">5★</p>
+                  <p className="text-brand-muted text-xs tracking-widest uppercase">Quality</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Text */}
+            <div>
+              <p className="text-[10px] font-semibold tracking-[0.35em] uppercase text-brand-terracotta mb-4">
+                Our Story
+              </p>
+              <h2 className="font-heading font-light text-4xl sm:text-5xl text-brand-charcoal leading-tight mb-6">
+                Born in Nigeria,<br />
+                <em className="font-medium">Styled for the World</em>
+              </h2>
+              <p className="text-brand-muted leading-relaxed mb-4 text-sm">
+                At AIE Clothing Africa, fashion is more than fabric — it's a declaration.
+                Every stitch honours the rich tapestry of African heritage while speaking
+                a bold, contemporary language.
+              </p>
+              <p className="text-brand-muted leading-relaxed mb-8 text-sm">
+                We source the finest Ankara prints and premium fabrics, partnering with
+                skilled artisans to create pieces that feel as magnificent as they look.
+              </p>
+              <Link href="/about" className="btn-outline">
+                Our Story <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHATSAPP CTA ── */}
+      <section className="bg-brand-charcoal">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
+          <p className="text-[10px] font-semibold tracking-[0.35em] uppercase text-brand-terracotta mb-4">
+            Custom Orders
+          </p>
+          <h2 className="font-heading font-light text-4xl sm:text-5xl text-white mb-4">
+            Have something in mind?
+          </h2>
+          <p className="text-white/50 text-sm mb-8 max-w-md mx-auto">
+            We take custom orders, aso-ebi sets, and bulk commissions.
+            Chat with us directly on WhatsApp.
+          </p>
+          <a
+            href={`https://wa.me/${whatsapp}?text=Hello AIE Clothing! I'd like to place a custom order.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white text-brand-charcoal hover:bg-brand-terracotta hover:text-white px-10 py-4 text-xs font-semibold tracking-[0.2em] uppercase transition-colors"
+          >
+            <MessageCircle className="h-3.5 w-3.5" />
+            Chat on WhatsApp
+          </a>
+        </div>
+      </section>
+    </div>
+  );
+}
