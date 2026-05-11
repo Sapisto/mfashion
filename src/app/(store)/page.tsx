@@ -12,10 +12,13 @@ const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
 const FALLBACK_COLORS = ["#b5622a", "#111111", "#c9973e", "#3d2b1f"];
 
 const CATEGORY_DESCRIPTIONS: Record<string, string> = {
-  "ankara-styles": "Vibrant prints, timeless elegance",
-  "casual-wear": "Effortless style for every day",
-  "evening-wear": "Turn every entrance into a statement",
-  "accessories": "The details that complete the look",
+  "tops-and-short": "Chic tops paired with matching shorts",
+  "asooke-patch-work": "Bold Asooke artistry, reimagined",
+  "bubu-designs": "Comfort, elegance and African flair",
+  "men-kaftan": "Refined kaftans for the modern man",
+  "asooke": "Premium handwoven Asooke fabric",
+  "tops-and-trousers": "Coordinated sets for every occasion",
+  "ankara-and-asooke-jacket": "Statement jackets — bold and proud",
 };
 
 async function getFeaturedProducts(): Promise<Product[]> {

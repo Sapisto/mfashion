@@ -15,9 +15,9 @@ const CartButton = dynamic(
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
-  { href: "/shop?category=ankara-styles", label: "Ankara" },
-  { href: "/shop?category=casual-wear", label: "Casual" },
-  { href: "/shop?category=evening-wear", label: "Evening" },
+  { href: "/shop?category=bubu-designs", label: "Bubu" },
+  { href: "/shop?category=asooke", label: "Asooke" },
+  { href: "/shop?category=men-kaftan", label: "Men" },
   { href: "/about", label: "About" },
 ];
 
