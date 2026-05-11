@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -37,10 +37,13 @@ export default function CheckoutPage() {
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  if (items.length === 0) {
-    router.replace("/cart");
-    return null;
-  }
+  useEffect(() => {
+    if (items.length === 0) {
+      router.replace("/cart");
+    }
+  }, [items.length, router]);
+
+  if (items.length === 0) return null;
 
   async function onSubmit(data: FormData) {
     setLoading(true);
