@@ -28,7 +28,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, totalPrice, clearCart } = useCartStore();
+  const { items, totalPrice } = useCartStore();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      clearCart();
+      // Cart is cleared in /checkout/verify after payment is confirmed
       window.location.href = json.authorizationUrl;
     } catch {
       toast.error("Could not connect. Please try again.");

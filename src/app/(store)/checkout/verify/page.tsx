@@ -4,6 +4,7 @@ import { CheckCircle, XCircle, ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { verifyTransaction } from "@/lib/paystack";
 import { formatPrice } from "@/lib/utils";
+import { ClearCart } from "@/components/store/ClearCart";
 
 interface Props {
   searchParams: Promise<{ reference?: string }>;
@@ -47,6 +48,7 @@ export default async function VerifyPage({ searchParams }: Props) {
     <div className="max-w-lg mx-auto px-4 py-20 text-center">
       {success ? (
         <>
+          <ClearCart />
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-5" />
           <h1 className="font-heading text-3xl font-bold text-brand-charcoal mb-2">
             Order Confirmed!
