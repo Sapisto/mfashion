@@ -7,12 +7,7 @@ import type { Product } from "@/types";
 
 const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
 
-const CATEGORY_META = [
-  { name: "Ankara Styles", slug: "ankara-styles", description: "Vibrant prints, timeless elegance", fallback: "#b5622a" },
-  { name: "Casual Wear", slug: "casual-wear", description: "Effortless style for every day", fallback: "#111111" },
-  { name: "Evening Wear", slug: "evening-wear", description: "Turn every entrance into a statement", fallback: "#c9973e" },
-  { name: "Accessories", slug: "accessories", description: "The details that complete the look", fallback: "#3d2b1f" },
-];
+const FALLBACK_COLORS = ["#b5622a", "#111111", "#c9973e", "#3d2b1f"];
 
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
@@ -28,20 +23,27 @@ async function getFeaturedProducts(): Promise<Product[]> {
 }
 
 async function getCategoriesWithImages() {
-  const results = await Promise.all(
-    CATEGORY_META.map(async (cat) => {
+  const categories = await db.category.findMany({
+    orderBy: { name: "asc" },
+    take: 4,
+  });
+
+  return Promise.all(
+    categories.map(async (cat, i) => {
       const product = await db.product.findFirst({
-        where: { category: { slug: cat.slug }, isActive: true },
+        where: { categoryId: cat.id, isActive: true },
         select: { images: true },
         orderBy: { createdAt: "desc" },
       });
       return {
-        ...cat,
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
         image: (product?.images ?? []).length > 0 ? product!.images[0] : null,
+        fallback: FALLBACK_COLORS[i % FALLBACK_COLORS.length],
       };
     })
   );
-  return results;
 }
 
 export default async function HomePage() {
