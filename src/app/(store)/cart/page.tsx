@@ -14,7 +14,7 @@ export default function CartPage() {
       <div className="max-w-2xl mx-auto px-4 py-24 text-center">
         <ShoppingBag className="h-14 w-14 text-brand-border mx-auto mb-5" />
         <h1 className="font-heading text-2xl font-bold text-brand-charcoal mb-2">
-          Your bag is empty
+          Your cart is empty
         </h1>
         <p className="text-brand-muted mb-8">
           Looks like you haven&apos;t added any pieces yet.
@@ -32,7 +32,7 @@ export default function CartPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="font-heading text-3xl font-bold text-brand-charcoal mb-10">
-        Shopping Bag ({items.length})
+        Cart ({items.length})
       </h1>
 
       <div className="grid lg:grid-cols-3 gap-10">

@@ -57,13 +57,13 @@ export function AddToCartButton({ product, selectedSize, selectedColor }: Props)
     >
       {added ? (
         <>
-          <Check className="h-4 w-4" /> Added to Bag
+          <Check className="h-4 w-4" /> Added to Cart
         </>
       ) : outOfStock ? (
         "Sold Out"
       ) : (
         <>
-          <ShoppingBag className="h-4 w-4" /> Add to Bag
+          <ShoppingBag className="h-4 w-4" /> Add to Cart
         </>
       )}
     </button>
