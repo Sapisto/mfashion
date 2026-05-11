@@ -3,8 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { Menu, X, Search } from "lucide-react";
-import { CartButton } from "./CartButton";
+
+const CartButton = dynamic(
+  () => import("./CartButton").then((m) => m.CartButton),
+  { ssr: false, loading: () => <div className="w-9 h-9" /> }
+);
 
 const NAV_LINKS = [
   { href: "/shop", label: "Shop" },
