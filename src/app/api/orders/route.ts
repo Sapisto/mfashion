@@ -5,6 +5,7 @@ import {
   generateReference,
   toKobo,
 } from "@/lib/paystack";
+import { sendOrderEmails } from "@/lib/email";
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -106,6 +107,30 @@ export async function POST(req: Request) {
         customer_name: customerName,
         customer_phone: customerPhone,
       },
+    });
+
+    // Send emails (non-blocking — never fails the order)
+    sendOrderEmails({
+      orderId: order.id,
+      customerName,
+      customerEmail,
+      customerPhone,
+      address,
+      city,
+      state,
+      total,
+      notes: notes ?? null,
+      items: items.map((i: {
+        productId: string; quantity: number; size?: string;
+        color?: string; price: number; productName: string; productImage?: string;
+      }) => ({
+        productName: i.productName,
+        quantity: i.quantity,
+        size: i.size ?? null,
+        color: i.color ?? null,
+        price: i.price,
+        productImage: i.productImage ?? null,
+      })),
     });
 
     return NextResponse.json({
