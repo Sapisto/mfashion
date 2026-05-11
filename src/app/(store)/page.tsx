@@ -9,6 +9,13 @@ const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
 
 const FALLBACK_COLORS = ["#b5622a", "#111111", "#c9973e", "#3d2b1f"];
 
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  "ankara-styles": "Vibrant prints, timeless elegance",
+  "casual-wear": "Effortless style for every day",
+  "evening-wear": "Turn every entrance into a statement",
+  "accessories": "The details that complete the look",
+};
+
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
     return (await db.product.findMany({
@@ -39,6 +46,7 @@ async function getCategoriesWithImages() {
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
+        description: CATEGORY_DESCRIPTIONS[cat.slug] ?? "Explore the collection",
         image: (product?.images ?? []).length > 0 ? product!.images[0] : null,
         fallback: FALLBACK_COLORS[i % FALLBACK_COLORS.length],
       };
