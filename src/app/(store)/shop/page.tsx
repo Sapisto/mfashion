@@ -3,6 +3,8 @@ import { ProductCard } from "@/components/store/ProductCard";
 import { ShopFilters } from "@/components/store/ShopFilters";
 import type { Product } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
   searchParams: Promise<{
     category?: string;

@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/ProductCard";
 import type { Product } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
 
 const FALLBACK_COLORS = ["#b5622a", "#111111", "#c9973e", "#3d2b1f"];
