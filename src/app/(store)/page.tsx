@@ -92,31 +92,42 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="flex items-end justify-end gap-3">
-            {/* editorial stat blocks */}
+          <div className="hidden lg:flex items-end justify-end gap-3">
+            {/* editorial stat blocks — product images as backgrounds */}
             <div className="space-y-3">
-              <div className="w-44 h-56 bg-brand-charcoal flex flex-col justify-end p-5">
-                <p className="font-heading text-5xl font-light text-white">
-                  500+
-                </p>
-                <p className="text-white/50 text-xs tracking-widest uppercase mt-1">
-                  Customers
-                </p>
+              {/* Tall block */}
+              <div className="relative w-44 h-56 overflow-hidden bg-brand-charcoal flex flex-col justify-end p-5">
+                {featured[0]?.images[0] && (
+                  <Image src={featured[0].images[0]} alt="" fill sizes="176px" className="object-cover opacity-60" />
+                )}
+                <div className="relative z-10">
+                  <p className="font-heading text-5xl font-light text-white">500+</p>
+                  <p className="text-white/60 text-xs tracking-widest uppercase mt-1">Customers</p>
+                </div>
               </div>
-              <div className="w-44 h-28 bg-brand-terracotta flex flex-col justify-end p-5">
-                <p className="font-heading text-2xl font-medium text-white">
-                  Made in
-                </p>
-                <p className="font-heading text-2xl font-medium text-white/70">
-                  Nigeria 🇳🇬
-                </p>
+              {/* Short block */}
+              <div className="relative w-44 h-28 overflow-hidden bg-brand-terracotta flex flex-col justify-end p-5">
+                {featured[1]?.images[0] && (
+                  <Image src={featured[1].images[0]} alt="" fill sizes="176px" className="object-cover opacity-50" />
+                )}
+                <div className="relative z-10">
+                  <p className="font-heading text-2xl font-medium text-white">Made in</p>
+                  <p className="font-heading text-2xl font-medium text-white/70">Nigeria 🇳🇬</p>
+                </div>
               </div>
             </div>
-            <div className="w-36 h-96 bg-brand-sand flex flex-col justify-end p-5 mb-0">
-              <p className="font-heading text-lg font-light text-brand-charcoal leading-snug italic">
-                &ldquo;Wear your heritage with pride.&rdquo;
-              </p>
-              <div className="w-8 h-px bg-brand-terracotta mt-4" />
+            {/* Tall side block */}
+            <div className="relative w-36 h-96 overflow-hidden bg-brand-sand flex flex-col justify-end p-5">
+              {featured[2]?.images[0] && (
+                <Image src={featured[2].images[0]} alt="" fill sizes="144px" className="object-cover opacity-70" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="relative z-10">
+                <p className="font-heading text-lg font-light text-white leading-snug italic">
+                  &ldquo;Wear your heritage with pride.&rdquo;
+                </p>
+                <div className="w-8 h-px bg-brand-gold mt-4" />
+              </div>
             </div>
           </div>
         </div>
@@ -234,31 +245,38 @@ export default async function HomePage() {
       <section className="border-t border-brand-border">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Visual block */}
+            {/* Visual block — product images as backgrounds */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="col-span-2 h-48 bg-brand-charcoal flex items-end p-6">
-                <p className="font-heading text-3xl font-light text-white italic">
+              {/* Wide top block */}
+              <div className="relative col-span-2 h-48 overflow-hidden bg-brand-charcoal flex items-end p-6">
+                {featured[0]?.images[0] && (
+                  <Image src={featured[0].images[0]} alt="" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover opacity-50" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <p className="relative z-10 font-heading text-3xl font-light text-white italic">
                   Bold. Authentic. African.
                 </p>
               </div>
-              <div className="h-36 bg-brand-terracotta flex items-end p-4">
-                <div>
-                  <p className="font-heading text-2xl font-bold text-white">
-                    50+
-                  </p>
-                  <p className="text-white/70 text-xs tracking-widest uppercase">
-                    Designs
-                  </p>
+              {/* Bottom-left */}
+              <div className="relative h-36 overflow-hidden bg-brand-terracotta flex items-end p-4">
+                {featured[1]?.images[0] && (
+                  <Image src={featured[1].images[0]} alt="" fill sizes="25vw" className="object-cover opacity-50" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="relative z-10">
+                  <p className="font-heading text-2xl font-bold text-white">50+</p>
+                  <p className="text-white/70 text-xs tracking-widest uppercase">Designs</p>
                 </div>
               </div>
-              <div className="h-36 bg-brand-sand flex items-end p-4">
-                <div>
-                  <p className="font-heading text-2xl font-bold text-brand-charcoal">
-                    5★
-                  </p>
-                  <p className="text-brand-muted text-xs tracking-widest uppercase">
-                    Quality
-                  </p>
+              {/* Bottom-right */}
+              <div className="relative h-36 overflow-hidden bg-brand-sand flex items-end p-4">
+                {featured[2]?.images[0] && (
+                  <Image src={featured[2].images[0]} alt="" fill sizes="25vw" className="object-cover opacity-60" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <div className="relative z-10">
+                  <p className="font-heading text-2xl font-bold text-white">5★</p>
+                  <p className="text-white/70 text-xs tracking-widest uppercase">Quality</p>
                 </div>
               </div>
             </div>
