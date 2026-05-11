@@ -13,6 +13,7 @@ const CartButton = dynamic(
 );
 
 const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
   { href: "/shop?category=ankara-styles", label: "Ankara" },
   { href: "/shop?category=casual-wear", label: "Casual" },
@@ -31,7 +32,7 @@ export function Header() {
     if (searchOpen) inputRef.current?.focus();
   }, [searchOpen]);
 
-  function handleSearch(e: React.FormEvent) {
+  function handleSearch(e: { preventDefault: () => void }) {
     e.preventDefault();
     if (!query.trim()) return;
     setSearchOpen(false);
