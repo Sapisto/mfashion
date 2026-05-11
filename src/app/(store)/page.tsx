@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/ProductCard";
@@ -6,62 +7,63 @@ import type { Product } from "@/types";
 
 const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
 
-const CATEGORIES = [
-  {
-    name: "Ankara Styles",
-    slug: "ankara-styles",
-    description: "Vibrant prints, timeless elegance",
-    bg: "#b5622a",
-  },
-  {
-    name: "Casual Wear",
-    slug: "casual-wear",
-    description: "Effortless style for every day",
-    bg: "#111111",
-  },
-  {
-    name: "Evening Wear",
-    slug: "evening-wear",
-    description: "Turn every entrance into a statement",
-    bg: "#c9973e",
-  },
-  {
-    name: "Accessories",
-    slug: "accessories",
-    description: "The details that complete the look",
-    bg: "#3d2b1f",
-  },
+const CATEGORY_META = [
+  { name: "Ankara Styles", slug: "ankara-styles", description: "Vibrant prints, timeless elegance", fallback: "#b5622a" },
+  { name: "Casual Wear", slug: "casual-wear", description: "Effortless style for every day", fallback: "#111111" },
+  { name: "Evening Wear", slug: "evening-wear", description: "Turn every entrance into a statement", fallback: "#c9973e" },
+  { name: "Accessories", slug: "accessories", description: "The details that complete the look", fallback: "#3d2b1f" },
 ];
 
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
-    return await db.product.findMany({
+    return (await db.product.findMany({
       where: { isFeatured: true, isActive: true },
       include: { category: true },
       orderBy: { createdAt: "desc" },
       take: 8,
-    }) as unknown as Product[];
+    })) as unknown as Product[];
   } catch {
     return [];
   }
 }
 
+async function getCategoriesWithImages() {
+  const results = await Promise.all(
+    CATEGORY_META.map(async (cat) => {
+      const product = await db.product.findFirst({
+        where: { category: { slug: cat.slug }, isActive: true },
+        select: { images: true },
+        orderBy: { createdAt: "desc" },
+      });
+      return {
+        ...cat,
+        image: (product?.images ?? []).length > 0 ? product!.images[0] : null,
+      };
+    })
+  );
+  return results;
+}
+
 export default async function HomePage() {
-  const featured = await getFeaturedProducts();
+  const [featured, categories] = await Promise.all([
+    getFeaturedProducts(),
+    getCategoriesWithImages(),
+  ]);
 
   return (
     <div className="bg-brand-cream">
-
       {/* ── HERO ── */}
       <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
         <div className="grid lg:grid-cols-2 gap-10 items-end">
           <div>
             <p className="text-[10px] font-semibold tracking-[0.35em] uppercase text-brand-terracotta mb-5">
-              New Collection — 2025
+              New Collection — 2026
             </p>
             <h1 className="font-heading font-light text-[clamp(3rem,8vw,6.5rem)] leading-[0.95] text-brand-charcoal mb-8">
-              African<br />
-              <em className="font-medium">Fashion</em><br />
+              African
+              <br />
+              <em className="font-medium">Fashion</em>
+              <br />
               Redefined.
             </h1>
             <div className="flex flex-wrap items-center gap-4">
@@ -84,12 +86,20 @@ export default async function HomePage() {
             {/* editorial stat blocks */}
             <div className="space-y-3">
               <div className="w-44 h-56 bg-brand-charcoal flex flex-col justify-end p-5">
-                <p className="font-heading text-5xl font-light text-white">500+</p>
-                <p className="text-white/50 text-xs tracking-widest uppercase mt-1">Customers</p>
+                <p className="font-heading text-5xl font-light text-white">
+                  500+
+                </p>
+                <p className="text-white/50 text-xs tracking-widest uppercase mt-1">
+                  Customers
+                </p>
               </div>
               <div className="w-44 h-28 bg-brand-terracotta flex flex-col justify-end p-5">
-                <p className="font-heading text-2xl font-medium text-white">Made in</p>
-                <p className="font-heading text-2xl font-medium text-white/70">Nigeria 🇳🇬</p>
+                <p className="font-heading text-2xl font-medium text-white">
+                  Made in
+                </p>
+                <p className="font-heading text-2xl font-medium text-white/70">
+                  Nigeria 🇳🇬
+                </p>
               </div>
             </div>
             <div className="w-36 h-96 bg-brand-sand flex flex-col justify-end p-5 mb-0">
@@ -106,7 +116,10 @@ export default async function HomePage() {
       <div className="border-y border-brand-border py-3 overflow-hidden bg-white">
         <div className="flex gap-12 whitespace-nowrap animate-[scroll_20s_linear_infinite]">
           {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="flex items-center gap-12 text-[10px] font-semibold tracking-[0.3em] uppercase text-brand-charcoal">
+            <span
+              key={i}
+              className="flex items-center gap-12 text-[10px] font-semibold tracking-[0.3em] uppercase text-brand-charcoal"
+            >
               <span>Premium Ankara Fabrics</span>
               <span className="text-brand-terracotta">✦</span>
               <span>Made in Nigeria</span>
@@ -126,27 +139,49 @@ export default async function HomePage() {
           <h2 className="font-heading font-light text-4xl sm:text-5xl text-brand-charcoal">
             Collections
           </h2>
-          <Link href="/shop" className="text-xs font-semibold tracking-[0.15em] uppercase text-brand-muted hover:text-brand-charcoal transition-colors flex items-center gap-1.5">
+          <Link
+            href="/shop"
+            className="text-xs font-semibold tracking-[0.15em] uppercase text-brand-muted hover:text-brand-charcoal transition-colors flex items-center gap-1.5"
+          >
             All <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.slug}
               href={`/shop?category=${cat.slug}`}
-              className="group aspect-[3/4] flex flex-col justify-end p-5 transition-opacity hover:opacity-90"
-              style={{ backgroundColor: cat.bg }}
+              className="group relative aspect-3/4 overflow-hidden flex flex-col justify-end"
             >
-              <div>
+              {/* Background — real product image or fallback colour */}
+              {cat.image ? (
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  sizes="(max-width: 640px) 50vw, 25vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              ) : (
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: cat.fallback }}
+                />
+              )}
+
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+              {/* Text */}
+              <div className="relative z-10 p-5">
                 <p className="font-heading text-white text-xl font-medium leading-tight">
                   {cat.name}
                 </p>
-                <p className="text-white/50 text-[11px] tracking-wide mt-1">
+                <p className="text-white/60 text-[11px] tracking-wide mt-1">
                   {cat.description}
                 </p>
-                <span className="inline-block mt-4 text-white/60 text-[10px] font-semibold tracking-[0.2em] uppercase group-hover:text-white transition-colors">
+                <span className="inline-block mt-3 text-white/50 text-[10px] font-semibold tracking-[0.2em] uppercase group-hover:text-white transition-colors">
                   Shop →
                 </span>
               </div>
@@ -168,7 +203,10 @@ export default async function HomePage() {
                   Featured Pieces
                 </h2>
               </div>
-              <Link href="/shop" className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.15em] uppercase text-brand-muted hover:text-brand-charcoal transition-colors">
+              <Link
+                href="/shop"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.15em] uppercase text-brand-muted hover:text-brand-charcoal transition-colors"
+              >
                 View All <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -195,14 +233,22 @@ export default async function HomePage() {
               </div>
               <div className="h-36 bg-brand-terracotta flex items-end p-4">
                 <div>
-                  <p className="font-heading text-2xl font-bold text-white">50+</p>
-                  <p className="text-white/70 text-xs tracking-widest uppercase">Designs</p>
+                  <p className="font-heading text-2xl font-bold text-white">
+                    50+
+                  </p>
+                  <p className="text-white/70 text-xs tracking-widest uppercase">
+                    Designs
+                  </p>
                 </div>
               </div>
               <div className="h-36 bg-brand-sand flex items-end p-4">
                 <div>
-                  <p className="font-heading text-2xl font-bold text-brand-charcoal">5★</p>
-                  <p className="text-brand-muted text-xs tracking-widest uppercase">Quality</p>
+                  <p className="font-heading text-2xl font-bold text-brand-charcoal">
+                    5★
+                  </p>
+                  <p className="text-brand-muted text-xs tracking-widest uppercase">
+                    Quality
+                  </p>
                 </div>
               </div>
             </div>
@@ -213,17 +259,19 @@ export default async function HomePage() {
                 Our Story
               </p>
               <h2 className="font-heading font-light text-4xl sm:text-5xl text-brand-charcoal leading-tight mb-6">
-                Born in Nigeria,<br />
+                Born in Nigeria,
+                <br />
                 <em className="font-medium">Styled for the World</em>
               </h2>
               <p className="text-brand-muted leading-relaxed mb-4 text-sm">
-                At AIE Clothing Africa, fashion is more than fabric — it's a declaration.
-                Every stitch honours the rich tapestry of African heritage while speaking
-                a bold, contemporary language.
+                At AIE Clothing Africa, fashion is more than fabric — it's a
+                declaration. Every stitch honours the rich tapestry of African
+                heritage while speaking a bold, contemporary language.
               </p>
               <p className="text-brand-muted leading-relaxed mb-8 text-sm">
-                We source the finest Ankara prints and premium fabrics, partnering with
-                skilled artisans to create pieces that feel as magnificent as they look.
+                We source the finest Ankara prints and premium fabrics,
+                partnering with skilled artisans to create pieces that feel as
+                magnificent as they look.
               </p>
               <Link href="/about" className="btn-outline">
                 Our Story <ArrowRight className="h-3.5 w-3.5" />
@@ -243,8 +291,8 @@ export default async function HomePage() {
             Have something in mind?
           </h2>
           <p className="text-white/50 text-sm mb-8 max-w-md mx-auto">
-            We take custom orders, aso-ebi sets, and bulk commissions.
-            Chat with us directly on WhatsApp.
+            We take custom orders, aso-ebi sets, and bulk commissions. Chat with
+            us directly on WhatsApp.
           </p>
           <a
             href={`https://wa.me/${whatsapp}?text=Hello AIE Clothing! I'd like to place a custom order.`}
