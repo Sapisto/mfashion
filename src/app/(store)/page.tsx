@@ -98,7 +98,7 @@ export default async function HomePage() {
               {/* Tall block */}
               <div className="relative w-44 h-56 overflow-hidden bg-brand-charcoal flex flex-col justify-end p-5">
                 {featured[0]?.images[0] && (
-                  <Image src={featured[0].images[0]} alt="" fill sizes="176px" className="object-cover opacity-60" />
+                  <Image src={featured[0].images[0]} alt="" fill sizes="176px" className="object-cover opacity-60" unoptimized />
                 )}
                 <div className="relative z-10">
                   <p className="font-heading text-5xl font-light text-white">500+</p>
@@ -108,7 +108,7 @@ export default async function HomePage() {
               {/* Short block */}
               <div className="relative w-44 h-28 overflow-hidden bg-brand-terracotta flex flex-col justify-end p-5">
                 {featured[1]?.images[0] && (
-                  <Image src={featured[1].images[0]} alt="" fill sizes="176px" className="object-cover opacity-50" />
+                  <Image src={featured[1].images[0]} alt="" fill sizes="176px" className="object-cover opacity-50" unoptimized />
                 )}
                 <div className="relative z-10">
                   <p className="font-heading text-2xl font-medium text-white">Made in</p>
@@ -119,7 +119,7 @@ export default async function HomePage() {
             {/* Tall side block */}
             <div className="relative w-36 h-96 overflow-hidden bg-brand-sand flex flex-col justify-end p-5">
               {featured[2]?.images[0] && (
-                <Image src={featured[2].images[0]} alt="" fill sizes="144px" className="object-cover opacity-70" />
+                <Image src={featured[2].images[0]} alt="" fill sizes="144px" className="object-cover opacity-70" unoptimized />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="relative z-10">
@@ -181,6 +181,7 @@ export default async function HomePage() {
                   src={cat.image}
                   alt={cat.name}
                   fill
+                  unoptimized
                   sizes="(max-width: 640px) 50vw, 25vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -250,7 +251,7 @@ export default async function HomePage() {
               {/* Wide top block */}
               <div className="relative col-span-2 h-48 overflow-hidden bg-brand-charcoal flex items-end p-6">
                 {featured[0]?.images[0] && (
-                  <Image src={featured[0].images[0]} alt="" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover opacity-50" />
+                  <Image src={featured[0].images[0]} alt="" fill sizes="(max-width:1024px) 100vw, 50vw" className="object-cover opacity-50" unoptimized />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <p className="relative z-10 font-heading text-3xl font-light text-white italic">
@@ -260,7 +261,7 @@ export default async function HomePage() {
               {/* Bottom-left */}
               <div className="relative h-36 overflow-hidden bg-brand-terracotta flex items-end p-4">
                 {featured[1]?.images[0] && (
-                  <Image src={featured[1].images[0]} alt="" fill sizes="25vw" className="object-cover opacity-50" />
+                  <Image src={featured[1].images[0]} alt="" fill sizes="25vw" className="object-cover opacity-50" unoptimized />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="relative z-10">
@@ -271,7 +272,7 @@ export default async function HomePage() {
               {/* Bottom-right */}
               <div className="relative h-36 overflow-hidden bg-brand-sand flex items-end p-4">
                 {featured[2]?.images[0] && (
-                  <Image src={featured[2].images[0]} alt="" fill sizes="25vw" className="object-cover opacity-60" />
+                  <Image src={featured[2].images[0]} alt="" fill sizes="25vw" className="object-cover opacity-60" unoptimized />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 <div className="relative z-10">
