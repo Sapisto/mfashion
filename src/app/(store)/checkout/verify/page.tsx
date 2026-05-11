@@ -21,38 +21,39 @@ export default async function VerifyPage({ searchParams }: Props) {
 
   try {
     const result = await verifyTransaction(reference);
-    console.log("[verify] Paystack status:", result.data.status, "ref:", reference);
+    const paystackStatus = result.data.status;
 
-    if (result.data.status === "success") {
-      await db.order.update({
-        where: { paymentRef: reference },
-        data: { paymentStatus: "PAID", status: "PROCESSING" },
-      });
+    if (paystackStatus === "success") {
       success = true;
 
-      const order = await db.order.findUnique({
-        where: { paymentRef: reference },
-      });
-      orderTotal = order?.total ?? 0;
-      customerName = order?.customerName ?? "";
+      // Update DB — but don't let DB errors hide a successful payment
+      try {
+        await db.order.update({
+          where: { paymentRef: reference },
+          data: { paymentStatus: "PAID", status: "PROCESSING" },
+        });
+        const order = await db.order.findUnique({
+          where: { paymentRef: reference },
+        });
+        orderTotal = order?.total ?? 0;
+        customerName = order?.customerName ?? "";
+      } catch (dbErr) {
+        console.error("[verify] DB update error (payment was successful):", dbErr);
+      }
     } else {
-      console.log("[verify] Non-success status:", result.data.status);
       try {
         await db.order.update({
           where: { paymentRef: reference },
           data: { paymentStatus: "FAILED" },
         });
-      } catch (dbErr) {
-        console.error("[verify] DB update failed:", dbErr);
+      } catch {
+        // order may not exist yet, ignore
       }
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";
-    // "reference not found" = user cancelled/closed Paystack without paying
-    if (msg.toLowerCase().includes("not found")) {
-      // leave success = false, show failure UI with try again
-    } else {
-      console.error("[verify] Error:", err);
+    if (!msg.toLowerCase().includes("not found")) {
+      console.error("[verify] Paystack error:", err);
     }
   }
 
