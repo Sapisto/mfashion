@@ -7,11 +7,13 @@ import { formatPrice } from "@/lib/utils";
 import { ClearCart } from "@/components/store/ClearCart";
 
 interface Props {
-  searchParams: Promise<{ reference?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function VerifyPage({ searchParams }: Props) {
-  const { reference } = await searchParams;
+  const params = await searchParams;
+  const raw = params.reference;
+  const reference = Array.isArray(raw) ? raw[0] : raw;
 
   if (!reference) redirect("/");
 
@@ -38,7 +40,10 @@ export default async function VerifyPage({ searchParams }: Props) {
         orderTotal = order?.total ?? 0;
         customerName = order?.customerName ?? "";
       } catch (dbErr) {
-        console.error("[verify] DB update error (payment was successful):", dbErr);
+        console.error(
+          "[verify] DB update error (payment was successful):",
+          dbErr,
+        );
       }
     } else {
       try {
