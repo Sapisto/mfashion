@@ -5,11 +5,13 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
 
+type ProductRow = { id: string; name: string; slug: string; price: number; stock: number; isActive: boolean; isFeatured: boolean; images: string[]; category: { name: string } | null };
+
 export default async function AdminProductsPage() {
-  const products = await db.product.findMany({
+  const products = (await db.product.findMany({
     include: { category: true },
     orderBy: { createdAt: "desc" },
-  });
+  })) as ProductRow[];
 
   return (
     <div>

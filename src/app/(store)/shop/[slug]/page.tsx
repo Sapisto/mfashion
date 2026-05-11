@@ -135,8 +135,8 @@ export default async function ProductPage({ params }: Props) {
               You May Also Like
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-              {related.map((r) => (
-                <ProductCard key={r.id} product={r as unknown as Product} />
+              {(related as unknown as Product[]).map((r) => (
+                <ProductCard key={r.id} product={r} />
               ))}
             </div>
           </div>

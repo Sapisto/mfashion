@@ -2,12 +2,13 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
+type OrderRow = { id: string; customerName: string; customerEmail: string; total: number; status: string; paymentStatus: string; items: { id: string }[]; createdAt: Date };
 
 export default async function AdminOrdersPage() {
-  const orders = await db.order.findMany({
+  const orders = (await db.order.findMany({
     include: { items: true },
     orderBy: { createdAt: "desc" },
-  });
+  })) as OrderRow[];
 
   return (
     <div>

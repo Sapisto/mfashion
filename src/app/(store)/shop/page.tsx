@@ -39,8 +39,8 @@ async function getProducts(params: Awaited<Props["searchParams"]>): Promise<Prod
   }) as unknown as Promise<Product[]>;
 }
 
-async function getCategories() {
-  return db.category.findMany({ orderBy: { name: "asc" } });
+async function getCategories(): Promise<{ id: string; name: string; slug: string }[]> {
+  return db.category.findMany({ orderBy: { name: "asc" } }) as Promise<{ id: string; name: string; slug: string }[]>;
 }
 
 export default async function ShopPage({ searchParams }: Props) {

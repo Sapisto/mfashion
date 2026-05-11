@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Package, ShoppingCart, DollarSign, TrendingUp } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
+type RecentOrder = { id: string; customerName: string; total: number; status: string; items: { id: string }[]; createdAt: Date };
 
 async function getStats() {
   const [orders, products, revenue] = await Promise.all([
@@ -13,11 +14,11 @@ async function getStats() {
     }),
   ]);
 
-  const recentOrders = await db.order.findMany({
+  const recentOrders = (await db.order.findMany({
     orderBy: { createdAt: "desc" },
     take: 5,
     include: { items: true },
-  });
+  })) as RecentOrder[];
 
   return {
     totalOrders: orders,
