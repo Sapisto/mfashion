@@ -4,6 +4,7 @@ import { ArrowLeft, MessageCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
+import type { OrderItem } from "@/types";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -98,7 +99,7 @@ export default async function OrderDetailPage({ params }: Props) {
             Items ({order.items.length})
           </h2>
           <div className="space-y-3">
-            {order.items.map((item) => (
+            {(order.items as unknown as OrderItem[]).map((item) => (
               <div
                 key={item.id}
                 className="flex items-center justify-between gap-4 text-sm py-2.5 border-b border-gray-50 last:border-0"
