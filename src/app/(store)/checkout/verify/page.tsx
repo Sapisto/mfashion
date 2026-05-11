@@ -29,20 +29,26 @@ export default async function VerifyPage({ searchParams }: Props) {
       success = true;
       
       try {
-        await db.order.update({
+        // Mark order as paid
+        const order = await db.order.update({
           where: { paymentRef: reference },
           data: { paymentStatus: "PAID", status: "PROCESSING" },
+          include: { items: true },
         });
-        const order = await db.order.findUnique({
-          where: { paymentRef: reference },
-        });
-        orderTotal = order?.total ?? 0;
-        customerName = order?.customerName ?? "";
-      } catch (dbErr) {
-        console.error(
-          "[verify] DB update error (payment was successful):",
-          dbErr,
+        orderTotal = order.total;
+        customerName = order.customerName;
+
+        // Decrement stock for each purchased item
+        await Promise.all(
+          order.items.map((item) =>
+            db.product.update({
+              where: { id: item.productId },
+              data: { stock: { decrement: item.quantity } },
+            }).catch(() => null) // ignore if product was deleted
+          )
         );
+      } catch (dbErr) {
+        console.error("[verify] DB update error (payment was successful):", dbErr);
       }
     } else {
       try {

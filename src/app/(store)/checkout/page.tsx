@@ -9,7 +9,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Lock, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cart";
-import { formatPrice, NIGERIAN_STATES } from "@/lib/utils";
+import { formatPrice, NIGERIAN_STATES, getShippingFee } from "@/lib/utils";
 
 const schema = z.object({
   customerName: z.string().min(2, "Name is required"),
@@ -30,6 +30,9 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, totalPrice } = useCartStore();
   const [loading, setLoading] = useState(false);
+  const [selectedState, setSelectedState] = useState("");
+  const shippingFee = getShippingFee(selectedState);
+  const grandTotal = totalPrice() + shippingFee;
 
   const {
     register,
@@ -62,7 +65,8 @@ export default function CheckoutPage() {
             productName: i.name,
             productImage: i.image,
           })),
-          total: totalPrice(),
+          total: grandTotal,
+          shippingFee,
         }),
       });
 
@@ -153,7 +157,14 @@ export default function CheckoutPage() {
                 />
               </Field>
               <Field label="State" error={errors.state?.message}>
-                <select {...register("state")} className="input-field">
+                <select
+                  {...register("state")}
+                  className="input-field"
+                  onChange={(e) => {
+                    register("state").onChange(e);
+                    setSelectedState(e.target.value);
+                  }}
+                >
                   <option value="">Select state…</option>
                   {NIGERIAN_STATES.map((s) => (
                     <option key={s} value={s}>
@@ -231,9 +242,17 @@ export default function CheckoutPage() {
                 <span>Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>
               </div>
-              <div className="flex justify-between font-bold text-brand-charcoal">
+              <div className="flex justify-between text-brand-muted">
+                <span>Delivery</span>
+                <span>
+                  {selectedState
+                    ? formatPrice(shippingFee)
+                    : <span className="text-xs italic">Select state</span>}
+                </span>
+              </div>
+              <div className="flex justify-between font-bold text-brand-charcoal border-t border-brand-border pt-2">
                 <span>Total (NGN)</span>
-                <span>{formatPrice(subtotal)}</span>
+                <span>{formatPrice(grandTotal)}</span>
               </div>
             </div>
 

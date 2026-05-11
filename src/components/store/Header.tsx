@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Menu, X, Search } from "lucide-react";
 
@@ -20,7 +21,23 @@ const NAV_LINKS = [
 ];
 
 export function Header() {
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen) inputRef.current?.focus();
+  }, [searchOpen]);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (!query.trim()) return;
+    setSearchOpen(false);
+    setQuery("");
+    router.push(`/shop?q=${encodeURIComponent(query.trim())}`);
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-brand-cream border-b border-brand-border">
@@ -30,10 +47,10 @@ export function Header() {
           {/* Mobile menu */}
           <button
             className="md:hidden p-1 -ml-1"
-            onClick={() => setOpen(!open)}
+            onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
           {/* Logo */}
@@ -58,24 +75,49 @@ export function Header() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
-            <Link href="/shop" aria-label="Search" className="hover:text-brand-terracotta transition-colors">
-              <Search className="h-4 w-4" />
-            </Link>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="p-2 hover:text-brand-terracotta transition-colors"
+              aria-label="Search"
+            >
+              {searchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
+            </button>
             <CartButton />
           </div>
         </div>
+
+        {/* Search bar — slides down */}
+        {searchOpen && (
+          <div className="pb-3">
+            <form onSubmit={handleSearch} className="flex items-center gap-2">
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search products…"
+                className="flex-1 px-4 py-2.5 border border-brand-border bg-white text-sm text-brand-charcoal placeholder:text-brand-muted focus:outline-none focus:border-brand-charcoal transition-colors"
+              />
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-terracotta text-white text-xs font-semibold tracking-wide uppercase transition-colors"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+        )}
       </div>
 
       {/* Mobile drawer */}
-      {open && (
+      {menuOpen && (
         <div className="md:hidden border-t border-brand-border bg-brand-cream px-5 py-6">
           <nav className="flex flex-col gap-5">
             {NAV_LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                onClick={() => setOpen(false)}
+                onClick={() => setMenuOpen(false)}
                 className="text-xs font-semibold tracking-[0.15em] uppercase text-brand-charcoal hover:text-brand-terracotta transition-colors"
               >
                 {l.label}

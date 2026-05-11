@@ -19,10 +19,22 @@ export async function POST(req: Request) {
 
   if (event.event === "charge.success") {
     const reference = event.data.reference as string;
-    await db.order.update({
+    const order = await db.order.update({
       where: { paymentRef: reference },
       data: { paymentStatus: "PAID", status: "PROCESSING" },
-    });
+      include: { items: true },
+    }).catch(() => null);
+
+    if (order) {
+      await Promise.all(
+        order.items.map((item) =>
+          db.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          }).catch(() => null)
+        )
+      );
+    }
   }
 
   return NextResponse.json({ received: true });

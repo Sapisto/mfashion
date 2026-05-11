@@ -28,6 +28,12 @@ export function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max).trimEnd() + "…" : text;
 }
 
+export function getShippingFee(state: string): number {
+  if (!state) return 0;
+  const lagos = ["lagos"];
+  return lagos.includes(state.toLowerCase()) ? 2500 : 3500;
+}
+
 export const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa",
   "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti",
