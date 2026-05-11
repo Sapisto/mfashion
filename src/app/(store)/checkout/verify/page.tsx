@@ -21,6 +21,7 @@ export default async function VerifyPage({ searchParams }: Props) {
 
   try {
     const result = await verifyTransaction(reference);
+    console.log("[verify] Paystack status:", result.data.status, "ref:", reference);
 
     if (result.data.status === "success") {
       await db.order.update({
@@ -35,13 +36,24 @@ export default async function VerifyPage({ searchParams }: Props) {
       orderTotal = order?.total ?? 0;
       customerName = order?.customerName ?? "";
     } else {
-      await db.order.update({
-        where: { paymentRef: reference },
-        data: { paymentStatus: "FAILED" },
-      });
+      console.log("[verify] Non-success status:", result.data.status);
+      try {
+        await db.order.update({
+          where: { paymentRef: reference },
+          data: { paymentStatus: "FAILED" },
+        });
+      } catch (dbErr) {
+        console.error("[verify] DB update failed:", dbErr);
+      }
     }
-  } catch {
-    // If order not found by ref, just show the status
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "";
+    // "reference not found" = user cancelled/closed Paystack without paying
+    if (msg.toLowerCase().includes("not found")) {
+      // leave success = false, show failure UI with try again
+    } else {
+      console.error("[verify] Error:", err);
+    }
   }
 
   return (
