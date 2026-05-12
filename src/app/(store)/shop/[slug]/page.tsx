@@ -53,11 +53,17 @@ export default async function ProductPage({ params }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-brand-muted mb-8">
-          <Link href="/" className="hover:text-brand-terracotta transition-colors">
+          <Link
+            href="/"
+            className="hover:text-brand-terracotta transition-colors"
+          >
             Home
           </Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-brand-terracotta transition-colors">
+          <Link
+            href="/shop"
+            className="hover:text-brand-terracotta transition-colors"
+          >
             Shop
           </Link>
           {p.category && (
@@ -120,7 +126,9 @@ export default async function ProductPage({ params }: Props) {
               ].map(({ icon: Icon, label, sub }) => (
                 <div key={label} className="text-center">
                   <Icon className="h-5 w-5 mx-auto text-brand-terracotta mb-1.5" />
-                  <p className="text-xs font-semibold text-brand-charcoal">{label}</p>
+                  <p className="text-xs font-semibold text-brand-charcoal">
+                    {label}
+                  </p>
                   <p className="text-[10px] text-brand-muted">{sub}</p>
                 </div>
               ))}

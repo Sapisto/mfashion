@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MessageCircle, Mail } from "lucide-react";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 
-const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
+const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
 
 export function Footer() {
   return (

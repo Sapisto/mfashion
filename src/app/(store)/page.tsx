@@ -7,7 +7,7 @@ import type { Product } from "@/types";
 
 export const dynamic = "force-dynamic";
 
-const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
+const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
 
 const FALLBACK_COLORS = ["#b5622a", "#111111", "#c9973e", "#3d2b1f"];
 

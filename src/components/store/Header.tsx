@@ -56,7 +56,7 @@ export function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="AIE Clothing Africa" width={40} height={40} />
+            <Image src="/logo.jpeg" alt="AIE Clothing Africa" width={40} height={40} />
             <span className="font-heading text-base font-semibold tracking-wide text-brand-charcoal hidden sm:block">
               AIE CLOTHING
             </span>

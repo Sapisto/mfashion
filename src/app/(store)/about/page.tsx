@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "The story behind AIE Clothing Africa — born in Nigeria, styled for the world.",
 };
 
-const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
+const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
 
 export default function AboutPage() {
   return (
@@ -34,7 +34,7 @@ export default function AboutPage() {
           {/* Logo block instead of broken external image */}
           <div className="flex flex-col items-center justify-center bg-brand-sand h-96 gap-6">
             <Image
-              src="/logo.svg"
+              src="/logo.jpeg"
               alt="AIE Clothing Africa"
               width={160}
               height={160}
