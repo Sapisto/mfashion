@@ -33,13 +33,16 @@ export default function AboutPage() {
 
           {/* Logo block instead of broken external image */}
           <div className="flex flex-col items-center justify-center bg-brand-sand h-96 gap-6">
-            <Image
-              src="/logo.jpeg"
-              alt="AIE Clothing Africa"
-              width={160}
-              height={160}
-              priority
-            />
+            <div className="w-40 h-40 rounded-full overflow-hidden shrink-0">
+              <Image
+                src="/logo.jpeg"
+                alt="AIE Clothing Africa"
+                width={160}
+                height={160}
+                priority
+                className="object-cover w-full h-full"
+              />
+            </div>
             <div className="text-center">
               <p className="font-heading text-xl font-semibold text-brand-charcoal">
                 AIE Clothing Africa
