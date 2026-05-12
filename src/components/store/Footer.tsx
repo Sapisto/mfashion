@@ -55,10 +55,13 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               {[
                 { href: "/shop", label: "All Collections" },
-                { href: "/shop?category=ankara", label: "Ankara Styles" },
-                { href: "/shop?category=casual", label: "Casual Wear" },
-                { href: "/shop?category=evening", label: "Evening Wear" },
-                { href: "/shop?featured=true", label: "New Arrivals" },
+                { href: "/shop?category=bubu-designs", label: "Bubu Designs" },
+                { href: "/shop?category=asooke", label: "Asooke" },
+                { href: "/shop?category=tops-and-short", label: "Tops and Short" },
+                { href: "/shop?category=men-kaftan", label: "Men Kaftan" },
+                { href: "/shop?category=ankara-and-asooke-jacket", label: "Ankara & Asooke Jacket" },
+                { href: "/shop?category=tops-and-trousers", label: "Tops and Trousers" },
+                { href: "/shop?category=asooke-patch-work", label: "Asooke Patch Work" },
               ].map((l) => (
                 <li key={l.href}>
                   <Link
