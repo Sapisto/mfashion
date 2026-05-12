@@ -6,7 +6,7 @@ import { NewOrderAlertEmail } from "@/emails/NewOrderAlert";
 const FROM = process.env.EMAIL_FROM ?? "AIE Clothing Africa <onboarding@resend.dev>";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "abdulazeezalasa@gmail.com";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
+const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
 
 interface OrderEmailData {
   orderId: string;

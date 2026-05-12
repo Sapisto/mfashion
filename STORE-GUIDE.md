@@ -245,7 +245,7 @@ Good photos = more sales. Here's what works:
 
 For technical issues, contact **Abdulazeez Alhassan**  
 Email: abdulazeezalasa@gmail.com  
-WhatsApp: +2349032421020
+WhatsApp: +2347079727740
 
 ---
 

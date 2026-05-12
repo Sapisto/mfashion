@@ -10,7 +10,7 @@ import { ProductOptions } from "@/components/store/ProductOptions";
 import type { Product } from "@/types";
 import type { Metadata } from "next";
 
-const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2348000000000";
+const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
 
 interface Props {
   params: Promise<{ slug: string }>;
