@@ -4,6 +4,7 @@ import { Plus, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
+import { ClickableRow } from "@/components/admin/ClickableRow";
 
 const PER_PAGE = 10;
 type ProductRow = { id: string; name: string; slug: string; price: number; stock: number; isActive: boolean; isFeatured: boolean; images: string[]; category: { name: string } | null };
@@ -69,7 +70,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+              <ClickableRow key={p.id} href={`/admin/products/${p.id}/edit`} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="relative w-10 h-12 rounded-sm overflow-hidden bg-brand-sand shrink-0">
@@ -131,7 +132,7 @@ export default async function AdminProductsPage({ searchParams }: Props) {
                     <DeleteProductButton id={p.id} name={p.name} />
                   </div>
                 </td>
-              </tr>
+              </ClickableRow>
             ))}
           </tbody>
         </table>

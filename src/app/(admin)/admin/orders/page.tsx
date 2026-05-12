@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
+import { ClickableRow } from "@/components/admin/ClickableRow";
 
 const PER_PAGE = 10;
 
@@ -50,20 +51,36 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Customer</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden sm:table-cell">Date</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Total</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden md:table-cell">Payment</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-600">Status</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">
+                Customer
+              </th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden sm:table-cell">
+                Date
+              </th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">
+                Total
+              </th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden md:table-cell">
+                Payment
+              </th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-600">
+                Status
+              </th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {orders.map((o) => (
-              <tr key={o.id} className="hover:bg-gray-50 transition-colors">
+              <ClickableRow
+                key={o.id}
+                href={`/admin/orders/${o.id}`}
+                className="hover:bg-gray-50 transition-colors"
+              >
                 <td className="px-4 py-3">
                   <p className="font-medium text-gray-900">{o.customerName}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{o.customerEmail}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {o.customerEmail}
+                  </p>
                 </td>
                 <td className="px-4 py-3 text-gray-500 hidden sm:table-cell text-xs">
                   {new Date(o.createdAt).toLocaleDateString("en-NG", {
@@ -89,7 +106,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                     View
                   </Link>
                 </td>
-              </tr>
+              </ClickableRow>
             ))}
           </tbody>
         </table>
@@ -104,7 +121,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50">
             <p className="text-xs text-gray-500">
-              Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, total)} of {total}
+              Showing {(page - 1) * PER_PAGE + 1}–
+              {Math.min(page * PER_PAGE, total)} of {total}
             </p>
             <div className="flex items-center gap-1">
               <Link
@@ -160,7 +178,9 @@ function PaymentBadge({ status }: { status: string }) {
     REFUNDED: "bg-gray-100 text-gray-600",
   };
   return (
-    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${map[status] ?? "bg-gray-100 text-gray-600"}`}>
+    <span
+      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${map[status] ?? "bg-gray-100 text-gray-600"}`}
+    >
       {status}
     </span>
   );
