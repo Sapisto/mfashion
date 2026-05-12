@@ -24,10 +24,15 @@ export const metadata: Metadata = {
   description:
     "Premium African fashion wear. Authentic Ankara styles, contemporary designs — Made in Nigeria, styled for the world.",
   keywords: ["African fashion", "Ankara", "Nigerian clothing", "AIE Clothing"],
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_NG",
     siteName: "AIE Clothing Africa",
+    images: [{ url: "/icon.png" }],
   },
 };
 

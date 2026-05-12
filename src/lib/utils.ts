@@ -31,7 +31,7 @@ export function truncate(text: string, max: number): string {
 export function getShippingFee(state: string): number {
   if (!state) return 0;
   const lagos = ["lagos"];
-  return lagos.includes(state.toLowerCase()) ? 5000 : 10000;
+  return lagos.includes(state.toLowerCase()) ? 50 : 100;
 }
 
 export const NIGERIAN_STATES = [
