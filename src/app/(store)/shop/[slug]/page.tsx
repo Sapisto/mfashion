@@ -18,11 +18,25 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = await db.product.findUnique({ where: { slug } });
+  const product = await db.product.findUnique({ where: { slug }, include: { category: true } });
   if (!product) return {};
+  const desc = product.description.slice(0, 160);
+  const image = product.images[0];
   return {
-    title: product.name,
-    description: product.description.slice(0, 160),
+    title: `${product.name} — African Fashion`,
+    description: desc,
+    openGraph: {
+      title: product.name,
+      description: desc,
+      images: image ? [{ url: image, alt: product.name }] : [],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description: desc,
+      images: image ? [image] : [],
+    },
   };
 }
 
@@ -48,8 +62,32 @@ export default async function ProductPage({ params }: Props) {
 
   const p = product as unknown as Product;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    description: p.description,
+    image: p.images,
+    sku: p.id,
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "NGN",
+      price: p.price,
+      availability: p.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://www.aieclothing.com/shop/${p.slug}`,
+      seller: { "@type": "Organization", name: "AIE Clothing Africa" },
+    },
+    brand: { "@type": "Brand", name: "AIE Clothing Africa" },
+  };
+
   return (
     <div className="bg-brand-cream">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-brand-muted mb-8">

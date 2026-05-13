@@ -16,23 +16,59 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
+const BASE = "https://www.aieclothing.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE),
   title: {
-    default: "AIE Clothing Africa",
+    default: "AIE Clothing Africa — Premium African Fashion",
     template: "%s | AIE Clothing Africa",
   },
   description:
-    "Premium African fashion wear. Authentic Ankara styles, contemporary designs — Made in Nigeria, styled for the world.",
-  keywords: ["African fashion", "Ankara", "Nigerian clothing", "AIE Clothing"],
+    "Shop premium African fashion — Ankara styles, Bubu designs, Asooke, Men Kaftan and more. Made in Nigeria, shipped nationwide. Order online or via WhatsApp.",
+  keywords: [
+    "African fashion Nigeria", "Ankara dress Lagos", "Bubu design Nigeria",
+    "Asooke fashion", "Nigerian clothing online", "AIE Clothing Africa",
+    "Aso-ebi styles", "African wear shop", "Men kaftan Nigeria",
+  ],
+  authors: [{ name: "AIE Clothing Africa" }],
+  creator: "AIE Clothing Africa",
+  publisher: "AIE Clothing Africa",
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
+    shortcut: "/icon.png",
   },
   openGraph: {
     type: "website",
     locale: "en_NG",
+    url: BASE,
     siteName: "AIE Clothing Africa",
-    images: [{ url: "/icon.png" }],
+    title: "AIE Clothing Africa — Premium African Fashion",
+    description: "Shop premium African fashion — Ankara, Bubu, Asooke and more. Made in Nigeria, shipped nationwide.",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "AIE Clothing Africa",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AIE Clothing Africa — Premium African Fashion",
+    description: "Shop premium African fashion — Ankara, Bubu, Asooke and more. Made in Nigeria.",
+    images: ["/icon.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
   },
 };
 
