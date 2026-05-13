@@ -90,7 +90,7 @@ export default async function VerifyPage({ searchParams }: Props) {
             order ships.
           </p>
           <a
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=Hi! I just placed an order (ref: ${reference}). When will it be ready?`}
+            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740"}?text=Hi! I just placed an order (ref: ${reference}). When will it be ready?`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-4 font-semibold text-sm rounded-sm transition-colors mb-3"
