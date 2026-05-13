@@ -31,6 +31,9 @@ export const metadata: Metadata = {
     "Asooke fashion", "Nigerian clothing online", "AIE Clothing Africa",
     "Aso-ebi styles", "African wear shop", "Men kaftan Nigeria",
   ],
+  verification: {
+    google: "KSiS9K-pO2He_F8dCdVhyBV9JvvhilKyKfO27baCUgg",
+  },
   authors: [{ name: "AIE Clothing Africa" }],
   creator: "AIE Clothing Africa",
   publisher: "AIE Clothing Africa",
