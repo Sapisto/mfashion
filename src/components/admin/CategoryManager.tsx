@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { slugify } from "@/lib/format";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Cat {
   id: string;
@@ -18,6 +19,10 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cat[
   const [categories, setCategories] = useState(initialCategories);
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const deletingCat = categories.find((c) => c.id === deletingId);
 
   async function handleAdd() {
     if (!name.trim()) return;
@@ -41,74 +46,86 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cat[
     }
   }
 
-  async function handleDelete(id: string, catName: string) {
-    if (!confirm(`Delete "${catName}"? Products won't be deleted.`)) return;
+  async function handleDelete() {
+    if (!deletingId) return;
+    setDeleteLoading(true);
     try {
-      const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/categories/${deletingId}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
-      setCategories((prev) => prev.filter((c) => c.id !== id));
+      setCategories((prev) => prev.filter((c) => c.id !== deletingId));
       toast.success("Category deleted");
+      setDeletingId(null);
       router.refresh();
     } catch {
       toast.error("Could not delete category");
+    } finally {
+      setDeleteLoading(false);
     }
   }
 
   return (
-    <div className="max-w-lg space-y-5">
-      {/* Add new */}
-      <div className="bg-white rounded-lg border border-gray-200 p-5">
-        <h2 className="font-semibold text-gray-900 mb-4">Add Category</h2>
-        <div className="flex gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Category name…"
-            className="admin-input flex-1"
-            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-          />
-          <button
-            onClick={handleAdd}
-            disabled={saving || !name.trim()}
-            className="px-4 py-2.5 bg-brand-terracotta hover:bg-brand-terracotta-dark disabled:opacity-60 text-white rounded-sm text-sm font-semibold transition-colors flex items-center gap-2"
-          >
-            {saving ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Plus className="h-4 w-4" />
-            )}
-            Add
-          </button>
+    <>
+      <div className="max-w-lg space-y-5">
+        {/* Add new */}
+        <div className="bg-white rounded-lg border border-gray-200 p-5">
+          <h2 className="font-semibold text-gray-900 mb-4">Add Category</h2>
+          <div className="flex gap-2">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Category name…"
+              className="admin-input flex-1"
+              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+            />
+            <button
+              onClick={handleAdd}
+              disabled={saving || !name.trim()}
+              className="px-4 py-2.5 bg-brand-terracotta hover:bg-brand-terracotta-dark disabled:opacity-60 text-white rounded-sm text-sm font-semibold transition-colors flex items-center gap-2"
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              Add
+            </button>
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-50">
+          {categories.map((c) => (
+            <div key={c.id} className="flex items-center justify-between px-5 py-3.5">
+              <div>
+                <p className="font-medium text-gray-900">{c.name}</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {c._count.products} product{c._count.products !== 1 ? "s" : ""} · /{c.slug}
+                </p>
+              </div>
+              <button
+                onClick={() => setDeletingId(c.id)}
+                className="p-1.5 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                disabled={c._count.products > 0}
+                title={c._count.products > 0 ? "Remove all products first" : "Delete"}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+
+          {categories.length === 0 && (
+            <div className="py-10 text-center text-gray-400 text-sm">
+              No categories yet.
+            </div>
+          )}
         </div>
       </div>
 
-      {/* List */}
-      <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-50">
-        {categories.map((c) => (
-          <div key={c.id} className="flex items-center justify-between px-5 py-3.5">
-            <div>
-              <p className="font-medium text-gray-900">{c.name}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {c._count.products} product{c._count.products !== 1 ? "s" : ""} · /{c.slug}
-              </p>
-            </div>
-            <button
-              onClick={() => handleDelete(c.id, c.name)}
-              className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
-              disabled={c._count.products > 0}
-              title={c._count.products > 0 ? "Remove products first" : "Delete"}
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
-        ))}
-
-        {categories.length === 0 && (
-          <div className="py-10 text-center text-gray-400 text-sm">
-            No categories yet.
-          </div>
-        )}
-      </div>
-    </div>
+      <ConfirmDialog
+        open={!!deletingId}
+        onOpenChange={(open) => !open && setDeletingId(null)}
+        title={`Delete "${deletingCat?.name}"?`}
+        description="Products in this category won't be deleted, but they'll become uncategorised."
+        confirmLabel="Delete category"
+        loading={deleteLoading}
+        onConfirm={handleDelete}
+      />
+    </>
   );
 }

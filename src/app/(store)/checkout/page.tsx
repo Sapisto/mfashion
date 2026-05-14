@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Lock, ArrowRight } from "lucide-react";
@@ -11,6 +11,7 @@ import { useCartStore } from "@/store/cart";
 import { formatPrice } from "@/lib/format";
 import { NIGERIAN_STATES, getShippingFee } from "@/lib/shipping";
 import { checkoutSchema, type CheckoutFormValues } from "@/lib/schemas/checkout.schema";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function CheckoutPage() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<CheckoutFormValues>({ resolver: zodResolver(checkoutSchema) });
 
@@ -143,21 +145,28 @@ export default function CheckoutPage() {
                 />
               </Field>
               <Field label="State" error={errors.state?.message}>
-                <select
-                  {...register("state")}
-                  className="input-field"
-                  onChange={(e) => {
-                    register("state").onChange(e);
-                    setSelectedState(e.target.value);
-                  }}
-                >
-                  <option value="">Select state…</option>
-                  {NIGERIAN_STATES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
+                <Controller
+                  name="state"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        setSelectedState(val);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select state…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {NIGERIAN_STATES.map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </Field>
               <Field
                 label="Order Notes (optional)"
