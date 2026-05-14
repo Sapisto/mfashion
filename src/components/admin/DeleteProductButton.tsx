@@ -34,7 +34,7 @@ export function DeleteProductButton({ id, name }: Props) {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={(e) => { e.stopPropagation(); setOpen(true); }}
         className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
         aria-label="Delete product"
       >
