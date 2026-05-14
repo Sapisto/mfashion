@@ -107,9 +107,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-gray-500">
+        <div className="border-t border-white/10 mt-12 pt-8 text-center text-xs text-gray-500">
           <p>© {new Date().getFullYear()} AIE Clothing Africa. All rights reserved.</p>
-          <p>Made with ♥ in Nigeria 🇳🇬</p>
         </div>
       </div>
     </footer>
