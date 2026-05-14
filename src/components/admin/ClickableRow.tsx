@@ -11,11 +11,14 @@ interface Props {
 export function ClickableRow({ href, children, className = "" }: Props) {
   const router = useRouter();
 
+  function handleClick(e: React.MouseEvent<HTMLTableRowElement>) {
+    const target = e.target as HTMLElement;
+    if (target.closest('button, a, input, select, textarea, [role="button"], [role="dialog"]')) return;
+    router.push(href);
+  }
+
   return (
-    <tr
-      onClick={() => router.push(href)}
-      className={`cursor-pointer ${className}`}
-    >
+    <tr onClick={handleClick} className={`cursor-pointer ${className}`}>
       {children}
     </tr>
   );
