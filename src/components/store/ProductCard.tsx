@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
 import type { Product } from "@/types";
 
 interface Props {

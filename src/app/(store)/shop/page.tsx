@@ -1,7 +1,7 @@
-import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/ProductCard";
 import { ShopFilters } from "@/components/store/ShopFilters";
-import type { Product } from "@/types";
+import { getProducts } from "@/lib/data/products";
+import { getCategories } from "@/lib/data/categories";
 
 export const dynamic = "force-dynamic";
 
@@ -12,37 +12,6 @@ interface Props {
     featured?: string;
     q?: string;
   }>;
-}
-
-async function getProducts(params: Awaited<Props["searchParams"]>): Promise<Product[]> {
-  const where: Record<string, unknown> = { isActive: true };
-
-  if (params.category) {
-    where.category = { slug: params.category };
-  }
-  if (params.featured === "true") {
-    where.isFeatured = true;
-  }
-  if (params.q) {
-    where.name = { contains: params.q, mode: "insensitive" };
-  }
-
-  const orderBy: Record<string, string> =
-    params.sort === "price_asc"
-      ? { price: "asc" }
-      : params.sort === "price_desc"
-      ? { price: "desc" }
-      : { createdAt: "desc" };
-
-  return db.product.findMany({
-    where,
-    include: { category: true },
-    orderBy,
-  }) as unknown as Promise<Product[]>;
-}
-
-async function getCategories(): Promise<{ id: string; name: string; slug: string }[]> {
-  return db.category.findMany({ orderBy: { name: "asc" } }) as Promise<{ id: string; name: string; slug: string }[]>;
 }
 
 export default async function ShopPage({ searchParams }: Props) {

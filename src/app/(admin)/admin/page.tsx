@@ -1,36 +1,14 @@
 import Link from "next/link";
 import { Package, ShoppingCart, DollarSign, TrendingUp } from "lucide-react";
-import { db } from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
+import { getAdminStats } from "@/lib/data/orders";
+
 type RecentOrder = { id: string; customerName: string; total: number; status: string; items: { id: string }[]; createdAt: Date };
 
-async function getStats() {
-  const [orders, products, revenue] = await Promise.all([
-    db.order.count(),
-    db.product.count({ where: { isActive: true } }),
-    db.order.aggregate({
-      _sum: { total: true },
-      where: { paymentStatus: "PAID" },
-    }),
-  ]);
-
-  const recentOrders = (await db.order.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    include: { items: true },
-  })) as RecentOrder[];
-
-  return {
-    totalOrders: orders,
-    totalProducts: products,
-    totalRevenue: revenue._sum.total ?? 0,
-    recentOrders,
-  };
-}
-
 export default async function AdminDashboard() {
-  const { totalOrders, totalProducts, totalRevenue, recentOrders } =
-    await getStats();
+  const { totalOrders, totalProducts, totalRevenue, recentOrders: rawRecentOrders } =
+    await getAdminStats();
+  const recentOrders = rawRecentOrders as unknown as RecentOrder[];
 
   const stats = [
     {

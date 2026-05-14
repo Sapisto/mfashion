@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { slugify } from "@/lib/utils";
+import { slugify } from "@/lib/format";
 
 interface Cat {
   id: string;

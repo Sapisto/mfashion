@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { db } from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
+import { getPaginatedOrders } from "@/lib/data/orders";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
 import { ClickableRow } from "@/components/admin/ClickableRow";
 
@@ -26,16 +26,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
 
-  const [total, orders] = await Promise.all([
-    db.order.count(),
-    db.order.findMany({
-      include: { items: true },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * PER_PAGE,
-      take: PER_PAGE,
-    }) as unknown as Promise<OrderRow[]>,
-  ]);
-
+  const { total, orders: rawOrders } = await getPaginatedOrders(page, PER_PAGE);
+  const orders = rawOrders as unknown as OrderRow[];
   const totalPages = Math.ceil(total / PER_PAGE);
 
   return (

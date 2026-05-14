@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, MessageCircle } from "lucide-react";
-import { db } from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
+import { getOrderById } from "@/lib/data/orders";
 import { OrderStatusSelect } from "@/components/admin/OrderStatusSelect";
 import type { OrderItem } from "@/types";
 
@@ -13,11 +13,7 @@ interface Props {
 export default async function OrderDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const order = await db.order.findUnique({
-    where: { id },
-    include: { items: { include: { product: true } } },
-  });
-
+  const order = await getOrderById(id);
   if (!order) notFound();
 
   const whatsapp = `https://wa.me/${order.customerPhone.replace(/\D/g, "")}?text=Hello ${encodeURIComponent(order.customerName)}! Your AIE Clothing order is ready. 🎉`;

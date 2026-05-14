@@ -1,63 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/ProductCard";
+import { getFeaturedProducts } from "@/lib/data/products";
+import { getCategoriesWithImages } from "@/lib/data/categories";
 import type { Product } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
-
-const FALLBACK_COLORS = ["#b5622a", "#111111", "#c9973e", "#3d2b1f"];
-
-const CATEGORY_DESCRIPTIONS: Record<string, string> = {
-  "tops-and-short": "Chic tops paired with matching shorts",
-  "asooke-patch-work": "Bold Asooke artistry, reimagined",
-  "bubu-designs": "Comfort, elegance and African flair",
-  "men-kaftan": "Refined kaftans for the modern man",
-  "asooke": "Premium handwoven Asooke fabric",
-  "tops-and-trousers": "Coordinated sets for every occasion",
-  "ankara-and-asooke-jacket": "Statement jackets — bold and proud",
-};
-
-async function getFeaturedProducts(): Promise<Product[]> {
-  try {
-    return (await db.product.findMany({
-      where: { isFeatured: true, isActive: true },
-      include: { category: true },
-      orderBy: { createdAt: "desc" },
-      take: 8,
-    })) as unknown as Product[];
-  } catch {
-    return [];
-  }
-}
-
-async function getCategoriesWithImages() {
-  const categories = await db.category.findMany({
-    orderBy: { name: "asc" },
-    take: 4,
-  });
-
-  return Promise.all(
-    categories.map(async (cat, i) => {
-      const product = await db.product.findFirst({
-        where: { categoryId: cat.id, isActive: true },
-        select: { images: true },
-        orderBy: { createdAt: "desc" },
-      });
-      return {
-        id: cat.id,
-        name: cat.name,
-        slug: cat.slug,
-        description: CATEGORY_DESCRIPTIONS[cat.slug] ?? "Explore the collection",
-        image: (product?.images ?? []).length > 0 ? product!.images[0] : null,
-        fallback: FALLBACK_COLORS[i % FALLBACK_COLORS.length],
-      };
-    })
-  );
-}
 
 export default async function HomePage() {
   const [featured, categories] = await Promise.all([

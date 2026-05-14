@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice } = useCartStore();

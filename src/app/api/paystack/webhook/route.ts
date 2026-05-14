@@ -17,6 +17,7 @@ export async function POST(req: Request) {
 
   const event = JSON.parse(body);
 
+
   if (event.event === "charge.success") {
     const reference = event.data.reference as string;
     const order = await db.order.update({

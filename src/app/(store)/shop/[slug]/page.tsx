@@ -2,12 +2,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle, Package, RotateCcw, Shield } from "lucide-react";
-import { db } from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
+import { getProductBySlug, getRelatedProducts } from "@/lib/data/products";
 import { ProductCard } from "@/components/store/ProductCard";
 import { ProductGallery } from "@/components/store/ProductGallery";
 import { ProductOptions } from "@/components/store/ProductOptions";
-import type { Product } from "@/types";
 import type { Metadata } from "next";
 
 const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "2347079727740";
@@ -18,7 +17,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = await db.product.findUnique({ where: { slug }, include: { category: true } });
+  const product = await getProductBySlug(slug, { activeOnly: false });
   if (!product) return {};
   const desc = product.description.slice(0, 160);
   const image = product.images[0];
@@ -43,40 +42,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
 
-  const product = await db.product.findUnique({
-    where: { slug, isActive: true },
-    include: { category: true },
-  });
-
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = await db.product.findMany({
-    where: {
-      isActive: true,
-      categoryId: product.categoryId,
-      NOT: { id: product.id },
-    },
-    include: { category: true },
-    take: 4,
-  });
-
-  const p = product as unknown as Product;
+  const related = await getRelatedProducts(product.categoryId, product.id);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: p.name,
-    description: p.description,
-    image: p.images,
-    sku: p.id,
+    name: product.name,
+    description: product.description,
+    image: product.images,
+    sku: product.id,
     offers: {
       "@type": "Offer",
       priceCurrency: "NGN",
-      price: p.price,
-      availability: p.stock > 0
+      price: product.price,
+      availability: product.stock > 0
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      url: `https://www.aieclothing.com/shop/${p.slug}`,
+      url: `https://www.aieclothing.com/shop/${product.slug}`,
       seller: { "@type": "Organization", name: "AIE Clothing Africa" },
     },
     brand: { "@type": "Brand", name: "AIE Clothing Africa" },
@@ -104,49 +89,49 @@ export default async function ProductPage({ params }: Props) {
           >
             Shop
           </Link>
-          {p.category && (
+          {product.category && (
             <>
               <span>/</span>
               <Link
-                href={`/shop?category=${p.category.slug}`}
+                href={`/shop?category=${product.category.slug}`}
                 className="hover:text-brand-terracotta transition-colors"
               >
-                {p.category.name}
+                {product.category.name}
               </Link>
             </>
           )}
           <span>/</span>
-          <span className="text-brand-charcoal">{p.name}</span>
+          <span className="text-brand-charcoal">{product.name}</span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Gallery */}
-          <ProductGallery images={p.images} name={p.name} />
+          <ProductGallery images={product.images} name={product.name} />
 
           {/* Info */}
           <div>
-            {p.category && (
+            {product.category && (
               <p className="text-brand-muted text-xs font-semibold tracking-[0.25em] uppercase mb-2">
-                {p.category.name}
+                {product.category.name}
               </p>
             )}
             <h1 className="font-heading text-3xl sm:text-4xl font-bold text-brand-charcoal mb-3">
-              {p.name}
+              {product.name}
             </h1>
             <p className="text-2xl font-bold text-brand-terracotta mb-6">
-              {formatPrice(p.price)}
+              {formatPrice(product.price)}
             </p>
 
             <p className="text-brand-muted leading-relaxed mb-8">
-              {p.description}
+              {product.description}
             </p>
 
             {/* Size & Color + Add to cart */}
-            <ProductOptions product={p} />
+            <ProductOptions product={product} />
 
             {/* WhatsApp order */}
             <a
-              href={`https://wa.me/${whatsapp}?text=Hello! I'd like to order the *${encodeURIComponent(p.name)}*. Is it available?`}
+              href={`https://wa.me/${whatsapp}?text=Hello! I'd like to order the *${encodeURIComponent(product.name)}*. Is it available?`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 w-full flex items-center justify-center gap-3 py-4 px-8 border border-brand-charcoal hover:border-brand-terracotta text-brand-charcoal hover:text-brand-terracotta font-semibold text-sm tracking-wide transition-colors rounded-sm"
@@ -181,7 +166,7 @@ export default async function ProductPage({ params }: Props) {
               You May Also Like
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-              {(related as unknown as Product[]).map((r) => (
+              {related.map((r) => (
                 <ProductCard key={r.id} product={r} />
               ))}
             </div>

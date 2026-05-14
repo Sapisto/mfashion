@@ -1,11 +1,8 @@
-import { db } from "@/lib/db";
+import { getCategoriesWithCount } from "@/lib/data/categories";
 import { CategoryManager } from "@/components/admin/CategoryManager";
 
 export default async function AdminCategoriesPage() {
-  const categories = await db.category.findMany({
-    include: { _count: { select: { products: true } } },
-    orderBy: { name: "asc" },
-  });
+  const categories = await getCategoriesWithCount();
 
   return (
     <div>

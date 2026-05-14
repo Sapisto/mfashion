@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { slugify } from "@/lib/utils";
+import { slugify } from "@/lib/format";
 
 export async function POST(req: Request) {
   const session = await auth();

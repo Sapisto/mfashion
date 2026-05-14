@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Pencil, ChevronLeft, ChevronRight } from "lucide-react";
-import { db } from "@/lib/db";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
+import { getPaginatedProducts } from "@/lib/data/products";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
 import { ClickableRow } from "@/components/admin/ClickableRow";
 
@@ -17,16 +17,8 @@ export default async function AdminProductsPage({ searchParams }: Props) {
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
 
-  const [total, products] = await Promise.all([
-    db.product.count(),
-    db.product.findMany({
-      include: { category: true },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * PER_PAGE,
-      take: PER_PAGE,
-    }) as unknown as Promise<ProductRow[]>,
-  ]);
-
+  const { total, products: rawProducts } = await getPaginatedProducts(page, PER_PAGE);
+  const products = rawProducts as unknown as ProductRow[];
   const totalPages = Math.ceil(total / PER_PAGE);
 
   return (

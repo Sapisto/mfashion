@@ -1,8 +1,8 @@
-import { db } from "@/lib/db";
+import { getCategories } from "@/lib/data/categories";
 import { ProductForm } from "@/components/admin/ProductForm";
 
 export default async function NewProductPage() {
-  const categories = await db.category.findMany({ orderBy: { name: "asc" } });
+  const categories = await getCategories();
 
   return (
     <div>

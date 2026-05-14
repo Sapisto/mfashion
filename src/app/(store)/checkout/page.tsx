@@ -5,26 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { Lock, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cart";
-import { formatPrice, NIGERIAN_STATES, getShippingFee } from "@/lib/utils";
-
-const schema = z.object({
-  customerName: z.string().min(2, "Name is required"),
-  customerEmail: z.string().email("Valid email required"),
-  customerPhone: z
-    .string()
-    .min(10, "Valid phone number required")
-    .max(14),
-  address: z.string().min(5, "Address is required"),
-  city: z.string().min(2, "City is required"),
-  state: z.string().min(1, "State is required"),
-  notes: z.string().optional(),
-});
-
-type FormData = z.infer<typeof schema>;
+import { formatPrice } from "@/lib/format";
+import { NIGERIAN_STATES, getShippingFee } from "@/lib/shipping";
+import { checkoutSchema, type CheckoutFormValues } from "@/lib/schemas/checkout.schema";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -38,7 +24,7 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
+  } = useForm<CheckoutFormValues>({ resolver: zodResolver(checkoutSchema) });
 
   useEffect(() => {
     if (items.length === 0) {
@@ -48,7 +34,7 @@ export default function CheckoutPage() {
 
   if (items.length === 0) return null;
 
-  async function onSubmit(data: FormData) {
+  async function onSubmit(data: CheckoutFormValues) {
     setLoading(true);
     try {
       const res = await fetch("/api/orders", {

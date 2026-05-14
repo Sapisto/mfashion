@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CheckCircle, XCircle, ArrowRight } from "lucide-react";
 import { db } from "@/lib/db";
 import { verifyTransaction } from "@/lib/paystack";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/lib/format";
 import { ClearCart } from "@/components/store/ClearCart";
 
 interface Props {

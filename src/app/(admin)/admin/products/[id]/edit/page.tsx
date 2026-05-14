@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
+import { getProductById } from "@/lib/data/products";
+import { getCategories } from "@/lib/data/categories";
 import { ProductForm } from "@/components/admin/ProductForm";
 
 interface Props {
@@ -10,8 +11,8 @@ export default async function EditProductPage({ params }: Props) {
   const { id } = await params;
 
   const [product, categories] = await Promise.all([
-    db.product.findUnique({ where: { id } }),
-    db.category.findMany({ orderBy: { name: "asc" } }),
+    getProductById(id),
+    getCategories(),
   ]);
 
   if (!product) notFound();
