@@ -38,7 +38,8 @@ export function OrderStatusSelect({ orderId, currentStatus }: Props) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
 
-  async function handleChange(next: string) {
+  async function handleChange(next: string | null) {
+    if (!next) return;
     const prev = status;
     setStatus(next);
     try {
@@ -57,7 +58,7 @@ export function OrderStatusSelect({ orderId, currentStatus }: Props) {
   }
 
   return (
-    <SelectPrimitive.Root value={status} onValueChange={handleChange}>
+    <SelectPrimitive.Root value={status} onValueChange={(val) => { if (val) handleChange(val); }}>
       {/* Trigger — compact coloured badge */}
       <SelectPrimitive.Trigger
         className={cn(

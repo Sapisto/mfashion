@@ -152,8 +152,8 @@ export default function CheckoutPage() {
                     <Select
                       value={field.value || ""}
                       onValueChange={(val) => {
-                        field.onChange(val);
-                        setSelectedState(val);
+                        field.onChange(val ?? "");
+                        setSelectedState(val ?? "");
                       }}
                     >
                       <SelectTrigger>
