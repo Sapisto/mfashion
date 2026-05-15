@@ -59,13 +59,13 @@ export function ProductGallery({ images, name }: Props) {
                   sizes="(max-width: 768px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 3rem), 50vw"
                   className="object-cover"
                   priority={i === 0}
+                  loading={i === 0 ? "eager" : "lazy"}
                   draggable={false}
                 />
               </div>
             ))}
           </div>
         </div>
-
       </div>
 
       {/* Thumbnails */}
