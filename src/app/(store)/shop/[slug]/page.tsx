@@ -68,14 +68,14 @@ export default async function ProductPage({ params }: Props) {
   };
 
   return (
-    <div className="bg-brand-cream">
+    <div className="bg-brand-cream overflow-x-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-brand-muted mb-8">
+        <nav className="flex items-center gap-1.5 text-xs text-brand-muted mb-8 min-w-0 overflow-hidden">
           <Link
             href="/"
             className="hover:text-brand-terracotta transition-colors"
@@ -101,10 +101,10 @@ export default async function ProductPage({ params }: Props) {
             </>
           )}
           <span>/</span>
-          <span className="text-brand-charcoal">{product.name}</span>
+          <span className="text-brand-charcoal truncate min-w-0">{product.name}</span>
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
           {/* Gallery */}
           <ProductGallery images={product.images} name={product.name} />
 
@@ -115,7 +115,7 @@ export default async function ProductPage({ params }: Props) {
                 {product.category.name}
               </p>
             )}
-            <h1 className="font-heading text-3xl sm:text-4xl font-bold text-brand-charcoal mb-3">
+            <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-charcoal mb-3">
               {product.name}
             </h1>
             <p className="text-2xl font-bold text-brand-terracotta mb-6">
